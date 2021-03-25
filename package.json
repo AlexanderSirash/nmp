@@ -1,0 +1,29 @@
+{
+  "name": "nmp",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "lint": "eslint --ext .js .",
+    "lint:fix": "eslint --fix --ext .js .",
+    "prepare": "husky install"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AlexanderSirash/nmp.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AlexanderSirash/nmp/issues"
+  },
+  "homepage": "https://github.com/AlexanderSirash/nmp#readme",
+  "devDependencies": {
+    "@commitlint/cli": "^12.0.1",
+    "@commitlint/config-conventional": "^12.0.1",
+    "eslint": "^7.22.0",
+    "eslint-plugin-node": "^11.1.0",
+    "husky": "^5.2.0"
+  }
+}
