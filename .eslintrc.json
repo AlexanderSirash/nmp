@@ -70,7 +70,14 @@
     "block-spacing": ["error", "always"],
     "no-trailing-spaces": ["error", { "ignoreComments": true }],
     "spaced-comment": ["error", "always", { "exceptions": ["*", "-", "+"] }],
-    "newline-before-return": "error"
+    "newline-before-return": "error",
+    "node/no-unsupported-features/es-syntax": [
+      "error",
+      {
+        "version": ">=14.16.0",
+        "ignores": ["modules"]
+      }
+    ]
   },
   "overrides": [
     {
