@@ -2,14 +2,19 @@ import path from 'path';
 import csv from 'csvtojson';
 import fs from 'fs/promises';
 
-const csvFilePath = path.join(__dirname, 'csv/test.csv');
-const csvToTxtFilePath = path.join(__dirname, 'cvsToTxt.txt');
+const buildFilePath = filePath => path.join(__dirname, filePath);
+
+const csvFilePath = 'csv/test.csv';
+const csvToTxtFilePath = 'cvsToTxt.txt';
+
+const fullCsvFilePath = buildFilePath(csvFilePath);
+const fullCsvToTxtFilePath = buildFilePath(csvToTxtFilePath);
 
 const checkTxtFile = async () => {
   try {
-    const csvFile = await fs.stat(csvToTxtFilePath);
+    const csvFile = await fs.stat(fullCsvToTxtFilePath);
     if (csvFile.isFile()) {
-      await fs.unlink(csvToTxtFilePath);
+      await fs.unlink(fullCsvToTxtFilePath);
       parseCsv();
     }
   } catch (e) {
@@ -21,18 +26,20 @@ const checkTxtFile = async () => {
   }
 };
 
-const parseCsv = () => csv().fromFile(csvFilePath)
+const parseCsv = () => csv().fromFile(fullCsvFilePath)
 .on('data', async (data) => {
   const jsonStr = data.toString();
   try {
-    await fs.appendFile(csvToTxtFilePath, jsonStr, 'utf8');
+    await fs.appendFile(fullCsvToTxtFilePath, jsonStr, 'utf8');
     console.log('txt file has been updated');
   } catch (e) {
     console.log(e);
   }
-}).on('error', (err) => {
+})
+.on('error', (err) => {
   console.log(err);
-}).on('done', (err) => {
+})
+.on('done', (err) => {
   if (err) {
     console.log(err);
   }
