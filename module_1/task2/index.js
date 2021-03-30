@@ -1,32 +1,43 @@
 import path from 'path';
-import csv from 'csvtojson';
 import fs from 'fs/promises';
-
-const buildFilePath = filePath => path.join(__dirname, filePath);
+import csv from 'csvtojson';
 
 const csvFilePath = 'csv/test.csv';
 const csvToTxtFilePath = 'cvsToTxt.txt';
 
-const fullCsvFilePath = buildFilePath(csvFilePath);
-const fullCsvToTxtFilePath = buildFilePath(csvToTxtFilePath);
+const buildFilePath = filePath => path.join(__dirname, filePath);
 
-const checkTxtFile = async () => {
+const checkAndParseTxtFileToCsv = async (csvFilePath, csvToTxtFilePath) => {
+  const fullCsvFilePath = buildFilePath(csvFilePath);
+  const fullCsvToTxtFilePath = buildFilePath(csvToTxtFilePath);
+
+  await unlinkFileIfExist(fullCsvToTxtFilePath, () => parseCsv(fullCsvFilePath, fullCsvToTxtFilePath));
+  parseCsv(fullCsvFilePath, fullCsvToTxtFilePath);
+
+};
+
+const unlinkFileIfExist = async (filePath, cb) => {
   try {
-    const csvFile = await fs.stat(fullCsvToTxtFilePath);
-    if (csvFile.isFile()) {
-      await fs.unlink(fullCsvToTxtFilePath);
-      parseCsv();
+    const csvToTxtFileStat = await fs.stat(filePath);
+    if (!csvToTxtFileStat.isFile()) {
+      return;
     }
+
+    await fs.unlink(filePath);
+
   } catch (e) {
-    if (e.code === 'ENOENT') {
-      parseCsv();
-    } else {
+    if (e.code !== 'ENOENT') {
       console.log(e);
+
+      return;
+    }
+    if (cb) {
+      cb();
     }
   }
 };
 
-const parseCsv = () => csv().fromFile(fullCsvFilePath)
+const parseCsv = (csvFilePath, fullCsvToTxtFilePath) => csv().fromFile(csvFilePath)
 .on('data', async (data) => {
   const jsonStr = data.toString();
   try {
@@ -39,11 +50,11 @@ const parseCsv = () => csv().fromFile(fullCsvFilePath)
 .on('error', (err) => {
   console.log(err);
 })
-.on('done', (err) => {
-  if (err) {
-    console.log(err);
+.on('done', (e) => {
+  if (e) {
+    console.log(e);
   }
   console.log('csv file has been parsed successfully');
 });
 
-checkTxtFile();
+checkAndParseTxtFileToCsv(csvFilePath, csvToTxtFilePath);
