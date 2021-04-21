@@ -3,7 +3,15 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "engines": {
+    "node": ">=14.16.0"
+  },
+  "parserOptions": {
+    "ecmaVersion": 2020
+  },
   "scripts": {
+    "task1": "nodemon --exec babel-node ./module_1/task1",
+    "task2": "nodemon --exec babel-node ./module_1/task2",
     "lint": "eslint --ext .js .",
     "lint:fix": "eslint --fix --ext .js .",
     "prepare": "husky install"
@@ -20,10 +28,17 @@
   },
   "homepage": "https://github.com/AlexanderSirash/nmp#readme",
   "devDependencies": {
+    "@babel/core": "^7.13.10",
+    "@babel/node": "^7.13.10",
+    "@babel/preset-env": "^7.13.10",
     "@commitlint/cli": "^12.0.1",
     "@commitlint/config-conventional": "^12.0.1",
     "eslint": "^7.22.0",
     "eslint-plugin-node": "^11.1.0",
-    "husky": "^5.2.0"
+    "husky": "^5.2.0",
+    "nodemon": "^2.0.7"
+  },
+  "dependencies": {
+    "csvtojson": "^2.0.10"
   }
 }
