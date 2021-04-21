@@ -11,4 +11,8 @@ const reverseNodeInputString = () => {
   process.stdin.pipe(new CustomReverse()).pipe(process.stdout);
 };
 
-reverseNodeInputString();
+if (require.main === module) {
+  reverseNodeInputString();
+} else {
+  module.exports = { CustomReverse, reverseNodeInputString };
+}
