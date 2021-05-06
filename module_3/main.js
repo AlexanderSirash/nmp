@@ -1,8 +1,8 @@
 import express from 'express';
-
-const app = express();
 import Router from './src/routes.js';
 import config from './config.js';
+
+const app = express();
 
 new Router(app);
 
