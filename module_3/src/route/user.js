@@ -1,19 +1,19 @@
 'use strict';
 
 import { Router } from 'express';
-import User from '../service/User.js';
 import { autoSuggestUsersValidation, userValidation } from '../schema/validation.js';
 import statusCodes from '../../statusCodes.js';
+import UserService from '../service/User.js';
 
 const router = Router();
 
 export default () => {
   router.param('id', (req, res, next, id) => {
 
-    const isUserExist = User.checkIsUserExist(id);
+    const isUserExist = UserService.checkIsUserExist(id);
 
     if (!isUserExist) {
-      res.status(statusCodes.notFound).send({
+      res.status(statusCodes.NOT_FOUND).send({
         error: {
           title: 'Not found',
           description: 'User with such id not found',
@@ -25,13 +25,14 @@ export default () => {
   });
 
   router.route('/:id')
-  .get((req, res) => User.getUser(req, res))
-  .put(userValidation, (req, res) => User.updateUser(req, res))
-  .delete((req, res) => User.removeUser(req, res));
+  .get((req, res) => res.status(statusCodes.OK).json(UserService.getUser(req.params.id)))
+  .put(userValidation, (req, res) => res.status(statusCodes.OK).json(UserService.updateUser(req.body, req.params.id)))
+  .delete((req, res) => res.status(statusCodes.OK).json(UserService.removeUser(req.params.id)));
 
   router.route('/')
-  .get(autoSuggestUsersValidation, (req, res) => User.autoSuggestUsers(req, res))
-  .post(userValidation, (req, res) => User.addUser(req, res));
+  .get(autoSuggestUsersValidation, (req, res) =>
+      res.status(statusCodes.OK).json(UserService.autoSuggestUsers(req.query)))
+  .post(userValidation, (req, res) => res.status(statusCodes.OK).json(UserService.addUser(req.body)));
 
   return router;
 };

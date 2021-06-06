@@ -17,14 +17,14 @@ export default class Router {
     this.app.use('/user', user());
 
     this.app.all('*', function (req, res, next) {
-      res.status(statusCodes.notFound).json({ error: { title: 'Not found', description: 'Page not found!' } });
+      res.status(statusCodes.NOT_FOUND).json({ error: { title: 'Not found', description: 'Page not found!' } });
     });
 
     this.app.use(function (error, req, res, next) {
       if (error) {
-        res.status(statusCodes.badRequest).json({ error: { title: 'Bad request', description: error.message } });
+        res.status(statusCodes.BAD_REQUEST).json({ error: { title: 'Bad request', description: error.message } });
       } else {
-        res.status(statusCodes.ok);
+        res.status(statusCodes.OK);
       }
     });
 

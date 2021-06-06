@@ -1,16 +1,14 @@
-import API from './Api.js';
 import { userModel } from '../model/user.js';
 import { v4 as uuidv4 } from 'uuid';
-import statusCodes from '../../statusCodes.js';
+import Model from './Model.js';
 
-class User extends API {
+class User {
   constructor() {
-    super();
     this.users = [];
 
   }
 
-  findUser(id) {
+  findById(id) {
     return this.users.find(user => user.id === id);
   }
 
@@ -21,41 +19,45 @@ class User extends API {
   }
 
   checkIsUserExist(id) {
-    return !!this.findUser(id);
+    return !!this.findById(id);
   }
 
-  getUser(req, res) {
-    res.status(statusCodes.ok).json(this.findUser(req.params.id));
+  getUser(id) {
+    return this.findById(id);
   }
 
-  addUser(req, res) {
-    const user = super.filterModel(userModel, req.body);
+  addUser(body) {
+    const user = Model.filterModel(userModel, body);
     const id = uuidv4();
     this.users.push({ id, ...user, isDeleted: false });
-    res.status(statusCodes.ok).json(id);
+
+    return id;
   }
 
-  updateUser(req, res) {
-    const user = this.findUser(req.params.id);
-    const updatedUser = { ...user, ...super.filterModel(userModel, req.body) };
+  updateUser(body, id) {
+    const user = this.findById(id);
+    const updatedUser = { ...user, ...Model.filterModel(userModel, body) };
     this.updateUsers(updatedUser);
-    res.status(statusCodes.ok).json(updatedUser);
+
+    return updatedUser;
   }
 
-  autoSuggestUsers(req, res) {
-    const { loginSubstring, limit } = req.query;
+  autoSuggestUsers(query) {
+    const { loginSubstring, limit } = query;
     const sliceStartPosition = 0;
     const sortedUsers = this.users.sort((a, b) => a.login.localeCompare(b.login));
     const filteredBySubstringUsers = sortedUsers.filter(user => user.login.includes(loginSubstring));
     const requestedAmountOfUsers = filteredBySubstringUsers.slice(sliceStartPosition, limit);
-    res.status(statusCodes.ok).json(requestedAmountOfUsers);
+
+    return requestedAmountOfUsers;
   }
 
-  removeUser(req, res) {
-    const user = this.findUser(req.params.id);
+  removeUser(id) {
+    const user = this.findById(id);
     const updatedUser = { ...user, isDeleted: true };
     this.updateUsers(updatedUser);
-    res.status(statusCodes.ok).json('success');
+
+    return 'success';
   }
 }
 

@@ -1,5 +1,5 @@
 export default {
-  ok: 200,
-  notFound: 404,
-  badRequest: 400,
+  OK: 200,
+  NOT_FOUND: 404,
+  BAD_REQUEST: 400,
 };
