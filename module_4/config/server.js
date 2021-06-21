@@ -1,7 +1,7 @@
 import packageConfig from '../../package.json';
 
 export default {
-  PORT: 3000,
+  PORT: process.env.APP_PORT,
   version: packageConfig.version,
   name: packageConfig.name,
   description: packageConfig.description,

@@ -22,7 +22,7 @@ export default class Router {
 
     this.app.use(function (error, req, res, next) {
       if (error) {
-        res.status(config.statusCodes.BAD_REQUEST).json({ error: { title: 'Bad request', description: error.message } });
+        res.status(config.statusCodes.INTERNAL_ERROR).json({ error: { title: 'Bad request', description: error.message } });
       } else {
         res.status(config.statusCodes.OK);
       }

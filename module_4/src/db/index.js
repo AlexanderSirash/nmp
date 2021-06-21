@@ -3,12 +3,12 @@ import fs from 'fs';
 import Sequelize from 'sequelize';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import generalConfig from '../../config/dbConfig.json';
+import dbConfig from '../../config/dbConfig.cjs';
 
 class DB {
   constructor() {
     this.__filename = fileURLToPath(import.meta.url);
-    this.config = generalConfig[process.env.NODE_ENV || 'development'];
+    this.config = dbConfig;
     this.connection = {};
   }
 

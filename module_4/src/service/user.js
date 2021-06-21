@@ -32,10 +32,8 @@ class User {
     return query.autoSuggestUsers(reqQuery);
   }
 
-  async removeUser(id) {
-    await query.updateUser({ isDeleted: true }, id);
-
-    return 'success';
+  removeUser(id) {
+    return query.updateUser({ isDeleted: true }, id).then(() => 'success');
   }
 }
 
