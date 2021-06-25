@@ -1,6 +1,6 @@
 {
   "name": "nmp",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "description": "NodeJS Global Mentoring Program",
   "main": "index.js",
   "engines": {
@@ -14,10 +14,11 @@
     "module2_task1": "nodemon --exec babel-node ./module_2/task1",
     "module2_task2": "nodemon --exec babel-node ./module_2/task2",
     "module3": "nodemon --experimental-json-modules ./module_3/main.js",
-
-    "module4_migration&&seed": "npx sequelize-cli db:migrate && npx sequelize-cli db:seed:all",
-    "module4": "nodemon --experimental-json-modules ./module_4/main.js",
-
+    "start": "nodemon --experimental-json-modules ./module_4/main.js",
+    "migration up all": "sequelize-cli db:migrate",
+    "migration revert all": "sequelize-cli db:migrate:undo:all",
+    "seeds up all": "sequelize-cli db:seed:all",
+    "seeds revert all": "sequelize-cli db:seed:undo:all",
     "lint": "eslint --ext .js .",
     "lint:fix": "eslint --fix --ext .js .",
     "prepare": "husky install"
@@ -54,6 +55,7 @@
     "pg": "^8.6.0",
     "pg-hstore": "^2.3.4",
     "sequelize": "^6.6.2",
+    "sequelize-cli": "^6.2.0",
     "uuid": "^8.3.2"
   }
 }

@@ -5,6 +5,8 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import dbConfig from '../../config/dbConfig.cjs';
 
+console.log('dbConfig', dbConfig);
+
 class DB {
   constructor() {
     this.__filename = fileURLToPath(import.meta.url);
@@ -33,9 +35,8 @@ class DB {
 
       this.connection.sequelize = this.sequelize;
       this.connection.Sequelize = Sequelize;
-
-      console.log('Connection has been established successfully.');
     });
+    console.log('Connection has been established successfully.');
   }
 
   async readModel(fileName) {

@@ -35,6 +35,7 @@ class User {
   removeUser(id) {
     return query.updateUser({ isDeleted: true }, id).then(() => 'success');
   }
+
 }
 
 export default new User();
