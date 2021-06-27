@@ -1,11 +1,15 @@
-import { userModel } from '../model/user.js';
-import query from '../query/user.js';
-import Model from './model.js';
+import { userModel } from '../model/index.js';
+import { UserQuery } from '../query/index.js';
+import { LogService, ModelService } from './index.js';
 
-class User {
+class User extends LogService {
+  constructor() {
+    super();
+    this.query = new UserQuery();
+  }
 
   findById(id) {
-    return query.getUser(id);
+    return this.query.getUser(id);
   }
 
   async checkIsUserExist(id) {
@@ -17,23 +21,23 @@ class User {
   }
 
   addUser(userData) {
-    const filteredUserData = Model.filterModel(userModel, userData);
+    const filteredUserData = ModelService.filterModel(userModel, userData);
 
-    return query.addUser(filteredUserData);
+    return this.query.addUser(filteredUserData);
   }
 
   updateUser(dataForUpdate, id) {
-    const filteredDataForUpdate = Model.filterModel(userModel, dataForUpdate);
+    const filteredDataForUpdate = ModelService.filterModel(userModel, dataForUpdate);
 
-    return query.updateUser(filteredDataForUpdate, id);
+    return this.query.updateUser(filteredDataForUpdate, id);
   }
 
   autoSuggestUsers(reqQuery) {
-    return query.autoSuggestUsers(reqQuery);
+    return this.query.autoSuggestUsers(reqQuery);
   }
 
   removeUser(id) {
-    return query.updateUser({ isDeleted: true }, id).then(() => 'success');
+    return this.query.updateUser({ isDeleted: true }, id).then(() => 'success');
   }
 
 }

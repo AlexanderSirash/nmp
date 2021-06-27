@@ -1,14 +1,19 @@
-import query from '../query/group.js';
-import Model from './model.js';
-import { groupModel } from '../model/group.js';
+import { GroupQuery } from '../query/index.js';
+import { groupModel } from '../model/index.js';
+import { LogService, ModelService } from './index.js';
 
-class Group {
+class Group extends LogService {
+  constructor() {
+    super();
+    this.query = new GroupQuery();
+  }
 
   findById(id) {
-    return query.getGroup(id);
+    return this.query.getGroup(id);
   }
 
   async checkIsGroupExist(id) {
+
     return !!await this.findById(id);
   }
 
@@ -17,23 +22,23 @@ class Group {
   }
 
   addGroup(groupData) {
-    const filterGroupData = Model.filterModel(groupModel, groupData);
+    const filterGroupData = ModelService.filterModel(groupModel, groupData);
 
-    return query.addGroup(filterGroupData);
+    return this.query.addGroup(filterGroupData);
   }
 
   updatedGroup(dataForUpdate, id) {
-    const filteredDataForUpdate = Model.filterModel(groupModel, dataForUpdate);
+    const filteredDataForUpdate = ModelService.filterModel(groupModel, dataForUpdate);
 
-    return query.updatedGroup(filteredDataForUpdate, id);
+    return this.query.updatedGroup(filteredDataForUpdate, id);
   }
 
   getAllGroups() {
-    return query.getAllGroups();
+    return this.query.getAllGroups();
   }
 
   removeGroup(id) {
-    return query.removeGroup(id);
+    return this.query.removeGroup(id);
   }
 }
 

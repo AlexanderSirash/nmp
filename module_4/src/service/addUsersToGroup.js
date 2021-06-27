@@ -1,8 +1,14 @@
-import query from '../query/addUsersToGroup.js';
+import { AddUsersToGroupQuery } from '../query/index.js';
+import { LogService } from './index.js';
 
-class AddUsersToGroup {
+class AddUsersToGroup extends LogService {
+  constructor() {
+    super();
+    this.query = new AddUsersToGroupQuery();
+  }
+
   addUsersToGroup(groupId, userId) {
-    return query.addUsersToGroup(groupId, userId);
+    return this.query.addUsersToGroup(groupId, userId);
   }
 }
 

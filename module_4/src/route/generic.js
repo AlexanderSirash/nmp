@@ -1,17 +1,17 @@
 'use strict';
 
 import { Router } from 'express';
-import config from '../../config/index.js';
+import { server } from '../../config/index.js';
 
 const router = Router();
 
-export default () => {
-  router.route('/')
-  .get((req, res) => res.json({
-    version: config.server.version,
-    name: config.server.name,
-    description: config.server.description,
-  }));
+export const genericRouter = () => {
+		router.route('/')
+		.get((req, res) => res.json({
+				version: server.version,
+				name: server.name,
+				description: server.description,
+		}));
 
-  return router;
+		return router;
 };

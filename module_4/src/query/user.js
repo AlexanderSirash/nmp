@@ -1,7 +1,7 @@
 import db from '../db/index.js';
 import sequelize from 'sequelize';
 
-class UserQuery {
+export class UserQuery {
 
   addUser(userData) {
     return db.connection.User.create(userData);
@@ -28,5 +28,3 @@ class UserQuery {
     });
   }
 }
-
-export default new UserQuery();

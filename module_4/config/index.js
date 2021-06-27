@@ -1,7 +1,2 @@
-import server from './server.js';
-import statusCodes from './statusCodes.js';
-
-export default {
-  server,
-  statusCodes,
-};
+export * from './server.js';
+export * from './statusCodes.js';

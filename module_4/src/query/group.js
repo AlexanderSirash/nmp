@@ -1,6 +1,6 @@
 import db from '../db/index.js';
 
-class GroupQuery {
+export class GroupQuery {
 
   addGroup(groupData) {
     return db.connection.Group.create(groupData);
@@ -28,4 +28,3 @@ class GroupQuery {
   }
 }
 
-export default new GroupQuery();
