@@ -10,7 +10,7 @@ import logger from './src/logger/index.js';
       const app = express();
       new Router(app);
       app.listen(process.env.APP_PORT, () =>
-        console.log(`Server ${server.version} was started on port ${process.env.APP_PORT}`));
+        console.log(`Server ${server.version} was started on port ${server.port}`));
     } catch (error) {
       console.error(error.message);
     }

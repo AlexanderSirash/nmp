@@ -9,7 +9,7 @@ const groupSchema = Joi.object().keys({
 export function groupValidation(req, res, next) {
   const validationResult = groupSchema.validate(req.body);
   if (validationResult.error) {
-    return res.status(statusCodes.BAD_REQUEST).send(validationResult.error.details);
+    return res.status(statusCodes.BAD_REQUEST).json(validationResult.error.details);
   }
   next();
 }
