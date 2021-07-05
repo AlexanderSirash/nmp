@@ -5,8 +5,6 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import dbConfig from '../../config/dbConfig.cjs';
 
-console.log('dbConfig', dbConfig);
-
 class DB {
   constructor() {
     this.__filename = fileURLToPath(import.meta.url);

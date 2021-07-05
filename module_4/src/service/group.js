@@ -27,7 +27,7 @@ class Group extends LogService {
     return this.query.addGroup(filterGroupData);
   }
 
-  updatedGroup(dataForUpdate, id) {
+  updateGroup(dataForUpdate, id) {
     const filteredDataForUpdate = ModelService.filterModel(groupModel, dataForUpdate);
 
     return this.query.updatedGroup(filteredDataForUpdate, id);
