@@ -1,26 +1,32 @@
-jest.mock('../service/index.js', () => ({
-  UserService: {
+import { userControllerInst } from '../../route/user.js';
+import { getMockReq, getMockRes } from '@jest-mock/express';
+import { statusCodes } from '../../../config/index.js';
+
+jest.mock('../../service/index.js', () => ({
+  UserService: jest.fn().mockReturnValue({
     checkIsUserExist: jest.fn(),
     addUser: jest.fn(),
     getUser: jest.fn(),
     updateUser: jest.fn(),
     removeUser: jest.fn(),
     autoSuggestUsers: jest.fn(),
-  },
+  }),
 }));
 
-import UserController from './user.js';
-import { getMockReq, getMockRes } from '@jest-mock/express';
-import { statusCodes } from '../../config/index.js';
-import { UserService } from '../service/index.js';
+jest.mock('../../query/index.js', () => ({
+  UserQuery: jest.fn(),
+}));
 
 const { res } = getMockRes();
 
-const internalError = { message: 'Internal error' };
+const internalError = { message: 'Internal server error' };
+const responseInternalError = {
+  error: { title: 'Internal server error', description: internalError.message },
+};
 
 function checkHandleErrorExpectation(res) {
   expect(res.status).toHaveBeenCalledWith(statusCodes.INTERNAL_ERROR);
-  expect(res.json).toHaveBeenCalledWith(internalError.message);
+  expect(res.json).toHaveBeenCalledWith(responseInternalError);
 }
 
 describe('Users', () => {
@@ -31,11 +37,11 @@ describe('Users', () => {
     const id = 1;
 
     it('should call UserService.checkIsGroupExist and  return "Not found" error', async () => {
-      jest.spyOn(UserService, 'checkIsUserExist').mockResolvedValue(false);
+      jest.spyOn(userControllerInst.userService, 'checkIsUserExist').mockResolvedValue(false);
 
-      await UserController.idParamGuard(req, res, next, id);
+      await userControllerInst.idParamGuard(req, res, next, id);
 
-      expect(UserService.checkIsUserExist).toHaveBeenCalledWith(id);
+      expect(userControllerInst.userService.checkIsUserExist).toHaveBeenCalledWith(id);
       expect(res.status).toHaveBeenCalledWith(statusCodes.NOT_FOUND);
       expect(res.json).toHaveBeenCalledWith({
         error: {
@@ -46,18 +52,18 @@ describe('Users', () => {
     });
 
     it('should UserService.checkIsGroupExist and allow to continue', async () => {
-      jest.spyOn(UserService, 'checkIsUserExist').mockResolvedValue(true);
+      jest.spyOn(userControllerInst.userService, 'checkIsUserExist').mockResolvedValue(true);
 
-      await UserController.idParamGuard(req, res, next, id);
+      await userControllerInst.idParamGuard(req, res, next, id);
 
-      expect(UserService.checkIsUserExist).toHaveBeenCalledWith(id);
+      expect(userControllerInst.userService.checkIsUserExist).toHaveBeenCalledWith(id);
       expect(next).toHaveBeenCalled();
     });
 
     it('should call UserService.checkIsGroupExist and return "Internal" error', async () => {
-      jest.spyOn(UserService, 'checkIsUserExist').mockRejectedValue(internalError);
+      jest.spyOn(userControllerInst.userService, 'checkIsUserExist').mockRejectedValue(internalError);
 
-      await UserController.idParamGuard(req, res, next, id);
+      await userControllerInst.idParamGuard(req, res, next, id);
 
       checkHandleErrorExpectation(res);
     });
@@ -75,21 +81,21 @@ describe('Users', () => {
 
     it('should call UserService.addUser and handle successful response', async () => {
       const id = 1;
-      jest.spyOn(UserService, 'addUser').mockResolvedValue({ dataValues: { id } });
+      jest.spyOn(userControllerInst.userService, 'addUser').mockResolvedValue({ dataValues: { id } });
 
-      await UserController.addUser(req, res);
+      await userControllerInst.addUser(req, res);
 
-      expect(UserService.addUser).toHaveBeenCalledWith(body);
+      expect(userControllerInst.userService.addUser).toHaveBeenCalledWith(body);
       expect(res.status).toHaveBeenCalledWith(statusCodes.OK);
       expect(res.json).toHaveBeenCalledWith(id);
     });
 
     it('should call UserService.addUser and handle error', async () => {
-      jest.spyOn(UserService, 'addUser').mockRejectedValue(internalError);
+      jest.spyOn(userControllerInst.userService, 'addUser').mockRejectedValue(internalError);
 
-      await UserController.addUser(req, res);
+      await userControllerInst.addUser(req, res);
 
-      expect(UserService.addUser).toHaveBeenCalled();
+      expect(userControllerInst.userService.addUser).toHaveBeenCalled();
       checkHandleErrorExpectation(res);
     });
   });
@@ -104,21 +110,21 @@ describe('Users', () => {
 
     it('should call UserService.getUser and handle successful response', async () => {
       const response = { id };
-      jest.spyOn(UserService, 'getUser').mockResolvedValue(response);
+      jest.spyOn(userControllerInst.userService, 'getUser').mockResolvedValue(response);
 
-      await UserController.getUser(req, res);
+      await userControllerInst.getUser(req, res);
 
-      expect(UserService.getUser).toHaveBeenCalledWith(id);
+      expect(userControllerInst.userService.getUser).toHaveBeenCalledWith(id);
       expect(res.status).toHaveBeenCalledWith(statusCodes.OK);
       expect(res.json).toHaveBeenCalledWith(response);
     });
 
     it('should call UserService.getUser and handle error', async () => {
-      jest.spyOn(UserService, 'getUser').mockRejectedValue(internalError);
+      jest.spyOn(userControllerInst.userService, 'getUser').mockRejectedValue(internalError);
 
-      await UserController.getUser(req, res);
+      await userControllerInst.getUser(req, res);
 
-      expect(UserService.getUser).toHaveBeenCalled();
+      expect(userControllerInst.userService.getUser).toHaveBeenCalled();
       checkHandleErrorExpectation(res);
     });
   });
@@ -134,21 +140,21 @@ describe('Users', () => {
     it('should call UserService.updateUser and handle successful response', async () => {
       const updatedUser = { id };
       const response = [{}, updatedUser];
-      jest.spyOn(UserService, 'updateUser').mockResolvedValue(response);
+      jest.spyOn(userControllerInst.userService, 'updateUser').mockResolvedValue(response);
 
-      await UserController.updateUser(req, res);
+      await userControllerInst.updateUser(req, res);
 
-      expect(UserService.updateUser).toHaveBeenCalledWith({}, id);
+      expect(userControllerInst.userService.updateUser).toHaveBeenCalledWith({}, id);
       expect(res.status).toHaveBeenCalledWith(statusCodes.OK);
       expect(res.json).toHaveBeenCalledWith(updatedUser);
     });
 
     it('should call UserService.updateUser and handle error', async () => {
-      jest.spyOn(UserService, 'updateUser').mockRejectedValue(internalError);
+      jest.spyOn(userControllerInst.userService, 'updateUser').mockRejectedValue(internalError);
 
-      await UserController.updateUser(req, res);
+      await userControllerInst.updateUser(req, res);
 
-      expect(UserService.updateUser).toHaveBeenCalled();
+      expect(userControllerInst.userService.updateUser).toHaveBeenCalled();
       checkHandleErrorExpectation(res);
     });
   });
@@ -164,21 +170,21 @@ describe('Users', () => {
 
     it('should call UserService.removeUser and handle successful response', async () => {
 
-      jest.spyOn(UserService, 'removeUser').mockResolvedValue(response);
+      jest.spyOn(userControllerInst.userService, 'removeUser').mockResolvedValue(response);
 
-      await UserController.removeUser(req, res);
+      await userControllerInst.removeUser(req, res);
 
-      expect(UserService.removeUser).toHaveBeenCalledWith(id);
+      expect(userControllerInst.userService.removeUser).toHaveBeenCalledWith(id);
       expect(res.status).toHaveBeenCalledWith(statusCodes.OK);
       expect(res.json).toHaveBeenCalledWith(response);
     });
 
     it('should call UserService.removeUser and handle error', async () => {
-      jest.spyOn(UserService, 'removeUser').mockRejectedValue(internalError);
+      jest.spyOn(userControllerInst.userService, 'removeUser').mockRejectedValue(internalError);
 
-      await UserController.removeUser(req, res);
+      await userControllerInst.removeUser(req, res);
 
-      expect(UserService.removeUser).toHaveBeenCalled();
+      expect(userControllerInst.userService.removeUser).toHaveBeenCalled();
       checkHandleErrorExpectation(res);
 
     });
@@ -191,21 +197,21 @@ describe('Users', () => {
 
     it('should call UserService.autoSuggestUsers and handle successful response', async () => {
 
-      jest.spyOn(UserService, 'autoSuggestUsers').mockResolvedValue(response);
+      jest.spyOn(userControllerInst.userService, 'autoSuggestUsers').mockResolvedValue(response);
 
-      await UserController.autoSuggestUsers(req, res);
+      await userControllerInst.autoSuggestUsers(req, res);
 
-      expect(UserService.autoSuggestUsers).toHaveBeenCalledWith(query);
+      expect(userControllerInst.userService.autoSuggestUsers).toHaveBeenCalledWith(query);
       expect(res.status).toHaveBeenCalledWith(statusCodes.OK);
       expect(res.json).toHaveBeenCalledWith(response);
     });
 
     it('should call UserService.autoSuggestUsers and handle error', async () => {
-      jest.spyOn(UserService, 'autoSuggestUsers').mockRejectedValue(internalError);
+      jest.spyOn(userControllerInst.userService, 'autoSuggestUsers').mockRejectedValue(internalError);
 
-      await UserController.autoSuggestUsers(req, res);
+      await userControllerInst.autoSuggestUsers(req, res);
 
-      expect(UserService.autoSuggestUsers).toHaveBeenCalled();
+      expect(userControllerInst.userService.autoSuggestUsers).toHaveBeenCalled();
       checkHandleErrorExpectation(res);
 
     });

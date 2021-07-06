@@ -8,8 +8,8 @@ module.exports = {
       role: 'admin',
     },
       {
-        username: 'test',
-        password: 'test!1',
+        username: 'user',
+        password: 'user!1',
         role: 'user',
       }]);
   },

@@ -1,11 +1,10 @@
 import { userModel } from '../model/index.js';
-import { UserQuery } from '../query/index.js';
 import { LogService, ModelService } from './index.js';
 
-class User extends LogService {
-  constructor() {
+export class UserService extends LogService {
+  constructor(query) {
     super();
-    this.query = new UserQuery();
+    this.query = query;
   }
 
   findById(id) {
@@ -41,6 +40,3 @@ class User extends LogService {
   }
 
 }
-
-export default new User();
-

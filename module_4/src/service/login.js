@@ -1,12 +1,11 @@
 import { LogService } from './index.js';
-import { LoginQuery } from '../query/index.js';
 import { JWT as jwtConfig } from '../../config/index.js';
 import jwt from 'jsonwebtoken';
 
-class Login extends LogService {
-  constructor() {
+export class LoginService extends LogService {
+  constructor(query) {
     super();
-    this.query = new LoginQuery();
+    this.query = query;
   }
 
   async login(username, password) {
@@ -30,4 +29,3 @@ class Login extends LogService {
   }
 }
 
-export default new Login();

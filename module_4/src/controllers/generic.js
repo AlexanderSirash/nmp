@@ -1,6 +1,6 @@
 import { server } from '../../config/index.js';
 
-class Generic {
+export class GenericController {
   async getGenericInfoAboutServer(req, res) {
     return res.json({
       version: server.version,
@@ -10,4 +10,3 @@ class Generic {
   }
 }
 
-export default new Generic();

@@ -1,11 +1,10 @@
-import { GroupQuery } from '../query/index.js';
 import { groupModel } from '../model/index.js';
 import { LogService, ModelService } from './index.js';
 
-class Group extends LogService {
-  constructor() {
+export class GroupService extends LogService {
+  constructor(query) {
     super();
-    this.query = new GroupQuery();
+    this.query = query;
   }
 
   findById(id) {
@@ -41,6 +40,3 @@ class Group extends LogService {
     return this.query.removeGroup(id);
   }
 }
-
-export default new Group();
-

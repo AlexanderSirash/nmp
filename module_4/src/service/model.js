@@ -1,4 +1,4 @@
-export default class Model {
+export class ModelService {
 
   static filterModel(model, data) {
     const isArray = Array.isArray(data);
@@ -6,12 +6,12 @@ export default class Model {
 
     if (isArray) {
       data.forEach((item) => {
-        filtered.push(Model.dropUselessKeys(Model.filterObject(model, item)));
+        filtered.push(ModelService.dropUselessKeys(ModelService.filterObject(model, item)));
       });
 
       return filtered;
     } else {
-      return Model.dropUselessKeys(Model.filterObject(model, data));
+      return ModelService.dropUselessKeys(ModelService.filterObject(model, data));
     }
   }
 

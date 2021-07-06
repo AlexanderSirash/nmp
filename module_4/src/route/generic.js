@@ -3,11 +3,14 @@
 import { Router } from 'express';
 import { GenericController } from '../controllers/index.js';
 
-const router = Router();
+export const genericControllerInst = new GenericController();
 
 export const genericRouter = () => {
+
+  const router = Router();
+
   router.route('/')
-  .get(GenericController.getGenericInfoAboutServer);
+  .get((req, res) => genericControllerInst.getGenericInfoAboutServer(req, res));
 
   return router;
 };

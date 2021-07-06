@@ -1,12 +1,15 @@
 import { statusCodes } from '../../config/index.js';
-import { GroupService } from '../service/index.js';
 
-class Group {
+export class GroupController {
+  constructor(service) {
+    this.groupService = service;
+  }
+
   async idParamGuard(req, res, next, id) {
     try {
-      const isGroupExist = await GroupService.checkIsGroupExist(id);
+      const isGroupExist = await this.groupService.checkIsGroupExist(id);
       if (!isGroupExist) {
-        res.status(statusCodes.NOT_FOUND).send({
+        res.status(statusCodes.NOT_FOUND).json({
           error: {
             title: 'Not found',
             description: `Group with id:${id} not found`,
@@ -16,54 +19,83 @@ class Group {
         next();
       }
     } catch (e) {
-      res.status(statusCodes.INTERNAL_ERROR).json(e.message);
+      res.status(statusCodes.INTERNAL_ERROR).json({
+        error: {
+          title: 'Internal server error',
+          description: e.message,
+        },
+      });
     }
   }
 
   async getGroup(req, res) {
     try {
-      const response = await GroupService.getGroup(req.params.id);
+      const response = await this.groupService.getGroup(req.params.id);
       res.status(statusCodes.OK).json(response);
     } catch (e) {
-      res.status(statusCodes.INTERNAL_ERROR).json(e.message);
+      res.status(statusCodes.INTERNAL_ERROR).json({
+        error: {
+          title: 'Internal server error',
+          description: e.message,
+        },
+      });
     }
   }
 
   async updateGroup(req, res) {
     try {
-      const [, updatedGroup] = await GroupService.updateGroup(req.body, req.params.id);
+      const [, updatedGroup] = await this.groupService.updateGroup(req.body, req.params.id);
       res.status(statusCodes.OK).json(updatedGroup);
     } catch (e) {
-      res.status(statusCodes.INTERNAL_ERROR).json(e.message);
+      res.status(statusCodes.INTERNAL_ERROR).json({
+        error: {
+          title: 'Internal server error',
+          description: e.message,
+        },
+      });
     }
   }
 
   async deleteGroup(req, res) {
     try {
-      await GroupService.removeGroup(req.params.id);
+      await this.groupService.removeGroup(req.params.id);
       res.status(statusCodes.OK).json('success');
     } catch (e) {
-      res.status(statusCodes.INTERNAL_ERROR).json(e.message);
+      res.status(statusCodes.INTERNAL_ERROR).json({
+        error: {
+          title: 'Internal server error',
+          description: e.message,
+        },
+      });
     }
   }
 
   async getAllGroups(req, res) {
     try {
-      const response = await GroupService.getAllGroups();
+      const response = await this.groupService.getAllGroups();
       res.status(statusCodes.OK).json(response);
     } catch (e) {
-      res.status(statusCodes.INTERNAL_ERROR).json(e.message);
+      res.status(statusCodes.INTERNAL_ERROR).json({
+        error: {
+          title: 'Internal server error',
+          description: e.message,
+        },
+      });
     }
   }
 
   async addGroup(req, res) {
     try {
-      const { dataValues: { id } } = await GroupService.addGroup(req.body);
+      const { dataValues: { id } } = await this.groupService.addGroup(req.body);
       res.status(statusCodes.OK).json(id);
     } catch (e) {
-      res.status(statusCodes.INTERNAL_ERROR).json(e.message);
+      res.status(statusCodes.INTERNAL_ERROR).json({
+        error: {
+          title: 'Internal server error',
+          description: e.message,
+        },
+      });
     }
   }
 }
 
-export default new Group();

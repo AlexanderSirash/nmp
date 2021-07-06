@@ -5,7 +5,7 @@ export function mockExpressApp(router) {
   const app = express();
 
   app.use(bodyParser.json());
-  app.use( router());
+  app.use(router());
 
-return app;
+  return app;
 }

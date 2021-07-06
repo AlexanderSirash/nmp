@@ -3,20 +3,24 @@
 import { Router } from 'express';
 import { groupValidation } from '../validators/index.js';
 import { GroupController } from '../controllers/index.js';
+import { GroupService } from '../service/index.js';
+import { GroupQuery } from '../query/index.js';
 
-const router = Router();
+export const groupControllerInst = new GroupController(new GroupService(new GroupQuery()));
 
 export const groupRouter = () => {
-  router.param('id', GroupController.idParamGuard);
+  const router = Router();
+
+  router.param('id', (req, res, next, id) => groupControllerInst.idParamGuard(req, res, next, id));
 
   router.route('/:id')
-  .get(GroupController.getGroup)
-  .put(groupValidation, GroupController.updateGroup)
-  .delete(GroupController.deleteGroup);
+  .get((req, res) => groupControllerInst.getGroup(req, res))
+  .put(groupValidation, (req, res) => groupControllerInst.updateGroup(req, res))
+  .delete((req, res) => groupControllerInst.deleteGroup(req, res));
 
   router.route('/')
-  .get(GroupController.getAllGroups)
-  .post(groupValidation, GroupController.addGroup);
+  .get((req, res) => groupControllerInst.getAllGroups(req, res))
+  .post(groupValidation, (req, res) => groupControllerInst.addGroup(req, res));
 
   return router;
 };

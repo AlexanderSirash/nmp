@@ -1,7 +1,7 @@
 import logger from '../logger/index.js';
 import { performance } from 'perf_hooks';
 
-class Log {
+export class LogService {
   constructor() {
     this.logMethods();
   }
@@ -37,4 +37,3 @@ class Log {
   }
 }
 
-export default Log;

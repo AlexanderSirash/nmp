@@ -1,10 +1,13 @@
-import { LoginService } from '../service/index.js';
 import { statusCodes } from '../../config/index.js';
 
-class Login {
+export class LoginController {
+  constructor(service) {
+    this.loginService = service;
+  }
+
   async login(req, res) {
     try {
-      const response = await LoginService.login(req.body.username, req.body.password);
+      const response = await this.loginService.login(req.body.username, req.body.password);
       if (response?.error) {
         res.status(statusCodes.UNAUTHORIZED).json(response);
       }
@@ -13,9 +16,13 @@ class Login {
       res.status(statusCodes.OK).send({ token });
 
     } catch (e) {
-      res.status(statusCodes.INTERNAL_ERROR).json(e.message);
+      res.status(statusCodes.INTERNAL_ERROR).json({
+        error: {
+          title: 'Internal server error',
+          description: e.message,
+        },
+      });
     }
   }
 }
 
-export default new Login();

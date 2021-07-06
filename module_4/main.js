@@ -1,7 +1,7 @@
 import express from 'express';
 import Router from './src/routes.js';
 import { server } from './config/index.js';
-import db from './src/db/index.js';
+import db from './db/index.js';
 import logger from './src/logger/index.js';
 
 (async () => {

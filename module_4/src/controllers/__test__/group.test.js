@@ -1,18 +1,21 @@
-import { statusCodes } from '../../config/index.js';
+import { statusCodes } from '../../../config/index.js';
 import request from 'supertest';
-import { groupRouter } from '../route/index.js';
-import { mockExpressApp } from '../../tests-utils/expressAppMock.js';
-import { GroupService } from '../service/index.js';
+import { groupControllerInst, groupRouter } from '../../route/group.js';
+import { mockExpressApp } from '../../../tests-utils/expressAppMock.js';
 
-jest.mock('../service/index.js', () => ({
-  GroupService: {
+jest.mock('../../service/index.js', () => ({
+  GroupService: jest.fn().mockReturnValue({
     checkIsGroupExist: jest.fn(),
     addGroup: jest.fn(),
     getGroup: jest.fn(),
     updateGroup: jest.fn(),
     getAllGroups: jest.fn(),
     removeGroup: jest.fn(),
-  },
+  }),
+}));
+
+jest.mock('../../query/index.js', () => ({
+  GroupQuery: jest.fn(),
 }));
 
 const customErrorMessageOjb = id => ({
@@ -22,8 +25,13 @@ const customErrorMessageOjb = id => ({
   },
 });
 
-const internalError = { message: 'Internal error' };
-const jsonFormatInternalErrorMsg = JSON.stringify(internalError.message);
+const internalError = { message: 'Internal server error' };
+const jsonFormatInternalErrorMsg = JSON.stringify({
+  error: {
+    title: 'Internal server error',
+    description: internalError.message,
+  },
+});
 
 describe('groupRouter', () => {
 
@@ -53,14 +61,15 @@ describe('groupRouter', () => {
   };
 
   beforeEach(() => {
-    jest.spyOn(GroupService, 'checkIsGroupExist').mockResolvedValue(true);
+    jest.spyOn(groupControllerInst.groupService, 'checkIsGroupExist').mockResolvedValue(true);
   });
 
   describe('/:id', () => {
 
     describe('param validation', () => {
       it('should validate param and get not found error if group isn\'t found', (done) => {
-        jest.spyOn(GroupService, 'checkIsGroupExist').mockResolvedValue(false);
+
+        jest.spyOn(groupControllerInst.groupService, 'checkIsGroupExist').mockResolvedValue(false);
 
         request(app)
         .get(`/${id}`)
@@ -69,8 +78,8 @@ describe('groupRouter', () => {
         .end(done);
       });
 
-      it('should validate param and handle internal error', (done) => {
-        jest.spyOn(GroupService, 'checkIsGroupExist').mockRejectedValue(internalError);
+      it('should validate param and handle Internal server error', (done) => {
+        jest.spyOn(groupControllerInst.groupService, 'checkIsGroupExist').mockRejectedValue(internalError);
 
         request(app)
         .get(`/${id}`)
@@ -82,7 +91,7 @@ describe('groupRouter', () => {
 
     describe('get group ', () => {
       it('should find and return group by id', (done) => {
-        jest.spyOn(GroupService, 'getGroup').mockResolvedValue(groupMock);
+        jest.spyOn(groupControllerInst.groupService, 'getGroup').mockResolvedValue(groupMock);
 
         request(app)
         .get(`/${id}`)
@@ -91,8 +100,8 @@ describe('groupRouter', () => {
         .end(done);
       });
 
-      it('should find group by id and handle internal error', (done) => {
-        jest.spyOn(GroupService, 'getGroup').mockRejectedValue(internalError);
+      it('should find group by id and handle Internal server error', (done) => {
+        jest.spyOn(groupControllerInst.groupService, 'getGroup').mockRejectedValue(internalError);
 
         request(app)
         .get(`/${id}`)
@@ -105,7 +114,7 @@ describe('groupRouter', () => {
     describe('update group ', () => {
 
       it('should validate data and throw JOI validation error', (done) => {
-        jest.spyOn(GroupService, 'updateGroup').mockResolvedValue([{}, updatedGroupMock]);
+        jest.spyOn(groupControllerInst.groupService, 'updateGroup').mockResolvedValue([{}, updatedGroupMock]);
 
         request(app)
         .put(`/${id}`)
@@ -115,7 +124,7 @@ describe('groupRouter', () => {
       });
 
       it('should find and return group by id', (done) => {
-        jest.spyOn(GroupService, 'updateGroup').mockResolvedValue([{}, updatedGroupMock]);
+        jest.spyOn(groupControllerInst.groupService, 'updateGroup').mockResolvedValue([{}, updatedGroupMock]);
 
         request(app)
         .put(`/${id}`)
@@ -125,8 +134,8 @@ describe('groupRouter', () => {
         .end(done);
       });
 
-      it('should update group by id and handle internal error', (done) => {
-        jest.spyOn(GroupService, 'updateGroup').mockRejectedValue(internalError);
+      it('should update group by id and handle Internal server error', (done) => {
+        jest.spyOn(groupControllerInst.groupService, 'updateGroup').mockRejectedValue(internalError);
 
         request(app)
         .put(`/${id}`)
@@ -142,7 +151,7 @@ describe('groupRouter', () => {
       const dbResponse = 1;
 
       it('should delete group by id', (done) => {
-        jest.spyOn(GroupService, 'removeGroup').mockResolvedValue(dbResponse);
+        jest.spyOn(groupControllerInst.groupService, 'removeGroup').mockResolvedValue(dbResponse);
 
         request(app)
         .delete(`/${id}`)
@@ -150,8 +159,8 @@ describe('groupRouter', () => {
         .end(done);
       });
 
-      it('should delete group by id and handle internal error', (done) => {
-        jest.spyOn(GroupService, 'removeGroup').mockRejectedValue(internalError);
+      it('should delete group by id and handle Internal server error', (done) => {
+        jest.spyOn(groupControllerInst.groupService, 'removeGroup').mockRejectedValue(internalError);
 
         request(app)
         .delete(`/${id}`)
@@ -188,7 +197,7 @@ describe('groupRouter', () => {
       ];
 
       it('should get all groups', (done) => {
-        jest.spyOn(GroupService, 'getAllGroups').mockResolvedValue(mockGroups);
+        jest.spyOn(groupControllerInst.groupService, 'getAllGroups').mockResolvedValue(mockGroups);
 
         request(app)
         .get('/')
@@ -198,8 +207,8 @@ describe('groupRouter', () => {
 
       });
 
-      it('should get all groups and handle internal error', (done) => {
-        jest.spyOn(GroupService, 'getAllGroups').mockRejectedValue(internalError);
+      it('should get all groups and handle Internal server error', (done) => {
+        jest.spyOn(groupControllerInst.groupService, 'getAllGroups').mockRejectedValue(internalError);
 
         request(app)
         .get('/')
@@ -215,7 +224,7 @@ describe('groupRouter', () => {
       const response = { dataValues: { id: 1 } };
 
       it('should validate data and throw JOI validation error', (done) => {
-        jest.spyOn(GroupService, 'addGroup').mockResolvedValue(response);
+        jest.spyOn(groupControllerInst.groupService, 'addGroup').mockResolvedValue(response);
 
         request(app)
         .post('/')
@@ -225,7 +234,7 @@ describe('groupRouter', () => {
       });
 
       it('should add new group', (done) => {
-        jest.spyOn(GroupService, 'addGroup').mockResolvedValue(response);
+        jest.spyOn(groupControllerInst.groupService, 'addGroup').mockResolvedValue(response);
 
         request(app)
         .post('/')
@@ -236,8 +245,8 @@ describe('groupRouter', () => {
       });
     });
 
-    it('should add new group and handle internal error', (done) => {
-      jest.spyOn(GroupService, 'addGroup').mockRejectedValue(internalError);
+    it('should add new group and handle Internal server error', (done) => {
+      jest.spyOn(groupControllerInst.groupService, 'addGroup').mockRejectedValue(internalError);
 
       request(app)
       .post('/')

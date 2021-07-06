@@ -3,7 +3,7 @@ import fs from 'fs';
 import Sequelize from 'sequelize';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import dbConfig from '../../config/dbConfig.cjs';
+import dbConfig from '../config/dbConfig.cjs';
 
 class DB {
   constructor() {

@@ -27,7 +27,7 @@
   },
   "jest": {
     "setupFilesAfterEnv": [
-      "./setupTests.js"
+      "./regenerator_runtime.js"
     ]
   },
   "repository": {

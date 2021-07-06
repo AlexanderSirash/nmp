@@ -1,16 +1,13 @@
-import { AddUsersToGroupQuery } from '../query/index.js';
 import { LogService } from './index.js';
 
-class AddUsersToGroup extends LogService {
-  constructor() {
+export class AddUsersToGroupService extends LogService {
+  constructor(query) {
     super();
-    this.query = new AddUsersToGroupQuery();
+    this.query = query;
   }
 
   addUsersToGroup(groupId, userId) {
     return this.query.addUsersToGroup(groupId, userId);
   }
 }
-
-export default new AddUsersToGroup();
 
