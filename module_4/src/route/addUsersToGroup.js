@@ -1,7 +1,7 @@
 'use strict';
 
 import { Router } from 'express';
-import { addUsersToGroupValidation } from '../validators/index.js';
+import requestValidation, { addUsersToGroupSchema } from '../validators/index.js';
 import { AddUsersToGroupController } from '../controllers/index.js';
 import { AddUsersToGroupService } from '../service/index.js';
 import { AddUsersToGroupQuery } from '../query/index.js';
@@ -13,7 +13,7 @@ export const addUsersToGroupRouter = () => {
   const router = Router();
 
   router.route('/')
-  .post(addUsersToGroupValidation, (req, res) => addUsersToGroupControllerInst.addUsersToGroup(req, res));
+  .post(requestValidation(addUsersToGroupSchema, 'body'), (req, res) => addUsersToGroupControllerInst.addUsersToGroup(req, res));
 
   return router;
 };

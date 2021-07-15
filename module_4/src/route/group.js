@@ -1,7 +1,7 @@
 'use strict';
 
 import { Router } from 'express';
-import { groupValidation } from '../validators/index.js';
+import requestValidation, { groupSchema } from '../validators/index.js';
 import { GroupController } from '../controllers/index.js';
 import { GroupService } from '../service/index.js';
 import { GroupQuery } from '../query/index.js';
@@ -15,12 +15,12 @@ export const groupRouter = () => {
 
   router.route('/:id')
   .get((req, res) => groupControllerInst.getGroup(req, res))
-  .put(groupValidation, (req, res) => groupControllerInst.updateGroup(req, res))
+  .put(requestValidation(groupSchema, 'body'), (req, res) => groupControllerInst.updateGroup(req, res))
   .delete((req, res) => groupControllerInst.deleteGroup(req, res));
 
   router.route('/')
   .get((req, res) => groupControllerInst.getAllGroups(req, res))
-  .post(groupValidation, (req, res) => groupControllerInst.addGroup(req, res));
+  .post(requestValidation(groupSchema, 'body'), (req, res) => groupControllerInst.addGroup(req, res));
 
   return router;
 };

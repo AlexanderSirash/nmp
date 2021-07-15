@@ -1,7 +1,7 @@
 'use strict';
 
 import { Router } from 'express';
-import { loginValidation } from '../validators/index.js';
+import requestValidation, { loginSchema } from '../validators/index.js';
 import { LoginController } from '../controllers/index.js';
 import { LoginService } from '../service/index.js';
 import { LoginQuery } from '../query/index.js';
@@ -12,7 +12,7 @@ export const loginRouter = () => {
   const router = Router();
 
   router.route('/')
-  .post(loginValidation, (req, res) => loginControllerInst.login(req, res));
+  .post(requestValidation(loginSchema, 'body'), (req, res) => loginControllerInst.login(req, res));
 
   return router;
 };

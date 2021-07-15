@@ -22,7 +22,7 @@ export default class Router {
     this.app.use('/login', loginRouter());
     this.app.use('*', validateToken);
     this.app.use('*', checkRights);
-
+    //
     this.app.use('/user', userRouter());
     this.app.use('/group', groupRouter());
     this.app.use('/addUsersToGroup', addUsersToGroupRouter());
