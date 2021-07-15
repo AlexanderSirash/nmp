@@ -13,7 +13,7 @@ export default () => {
     const isUserExist = UserService.checkIsUserExist(id);
 
     if (!isUserExist) {
-      res.status(statusCodes.NOT_FOUND).send({
+      res.status(statusCodes.NOT_FOUND).json({
         error: {
           title: 'Not found',
           description: 'User with such id not found',

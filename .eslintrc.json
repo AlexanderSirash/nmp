@@ -1,4 +1,8 @@
 {
+  "parserOptions": {
+    "ecmaVersion": 2020,
+    "sourceType": "module"
+  },
   "env": {
     "jest": true
   },
@@ -83,7 +87,8 @@
         "version": ">=14.16.0",
         "ignores": ["modules"]
       }
-    ]
+    ],
+    "node/no-unpublished-import": 0
   },
   "overrides": [
     {
